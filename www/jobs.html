@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <meta name="description" content="">
+        <meta name="author" content="Abdul Aleem Khan">
+        
+        <title>Handy</title>
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery-ui.js"></script>
+        <script src="js/jquery.mobile.custom.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/dbconnection.js"></script>
+        <style>
+            @font-face {
+                font-family: Lato;
+                src: url(fonts/Lato/Lato-Regular.ttf);
+            }
+            .service_header{
+                margin:0px;
+                margin-top:2px;
+            }
+            .container{
+                background-color:#EEEEEE;
+                width:100%;
+                padding:0px;
+            }
+            .navbar{
+                margin:0px;
+                z-index:0;
+                border-width:0px;
+                position:relative;
+                height:auto;
+            }
+            
+            .navbar-header{
+                background-color:#00CCEB;
+                width:100%;
+                margin-left:0px;
+                margin-right:0px;
+                padding-left:10px;
+                padding-right:10px;
+            }
+            
+            .container > .navbar-header{
+                margin-left:0px;
+                margin-right:0px;
+                position:relative;
+            }
+            html, body{
+                background-color:#EEEEEE;
+                font-family: Lato;
+                min-height:100%;
+                text-transform: none;
+            }
+            
+            #hidden_menu{
+                position:fixed;
+                top:0px;
+                width:75%;
+                min-height:100%;
+                z-index:1000;
+                background-color:white;
+                right:0px;
+                margin-top:49px;
+            }
+            .row{
+                margin:0px;
+                background-color:white; 
+                padding:0px;
+                overflow: hidden;
+            }
+            .row:hover{
+            }
+            
+            #servicelist{
+                border-radius: 5px;
+                margin-bottom:15px;
+                z-index:2500;
+                position:absolute;  
+                margin-top:-40px; 
+                margin-left:10px; 
+                margin-right:10px; 
+            }
+            
+            li> a{
+                text-decoration: none;
+                color:black;
+            } 
+            
+            p{
+                color: black;
+                font-size: 14px;
+            }
+            
+            a>h3{
+                 background-color:#8CC63E;
+            }
+            a>h3:hover{
+                background-color:#8CC63E;
+            }
+            input{
+                border:0px;
+            }
+        </style>
+    </head>
+    <body>
+    <nav class="navbar navbar-default navbar-fixed-top" style="position:fixed; width:100%; top:0px; z-index:5000;">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="#" onclick="toggleMenu(); return false;" style="position: absolute; top:10px; right:10px;">
+                        <img style="height:30px; width:30px;" src="img/baricon.png" />
+                    </a>
+                    <h4 id="pagetitle" style="margin:15px; margin-left:2px; padding-left:0px; color:white;">Find Jobs</h4>
+
+                </div>
+            </div>
+        </nav>
+
+    
+        <div id="content" class="container" style="padding:10px; padding-top:5px; margin-top:50px;">
+            <!--<div class"row" style="text-align:center;">
+            	<img src="img/preloader.gif" /><br>
+            	<h4>Loading Jobs</h4>
+            </div> -->
+            	
+            <div class="text-center"><img src="img/preloader.gif" /></div>
+            	
+
+        </div>
+
+        <div id="hidden_menu">
+
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="jobs.html" style="color:black; text-decoration: none;">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <strong>Home</strong>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="myjobs.html"  style="color:black; text-decoration: none;">
+                        <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <strong>My Jobs</strong>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="finished.html"  style="color:black; text-decoration: none;">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <strong>Completed Jobs</strong>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="address.html"  style="color:black; text-decoration: none;">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <strong>My Account</strong>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="login.html"  style="color:black; text-decoration: none;">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <strong>Logout</strong>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <p style="color:black;text-align:center; background-color:#EEEEEE; margin:0px; padding: 10px;"><a class="text-center" style="color:black;" href="#" id="more">Load More</a></p>
+        
+        
+        <script>
+            var serverurl = 'http://jackbluck.com.cp-in-11.webhostbox.net/yjyapp/server.php';
+        	var offset_val = 0;
+        	var map = {"HOME_CLEANER":"HOME_CLEANER", "HANGING_ITEMS":"HANDY_MAN",  "AC_INSTALLATION":"HANDY_MAN", "FURNITURE_ASSEMBLY":"HANDY_MAN", "MOVING_HELP":"HANDY_MAN", "DRAINS": "PLUMBER", "FAUCETS": "PLUMBER", "TOILETS": "PLUMBER", "GARBAGE_DISPOSAL": "PLUMBER", "LIGHTING": "ELECTRICIAN", "FANS": "ELECTRICIAN", "OUTLETS": "ELECTRICIAN", "SOMETHING_ELSE": "ELECTRICIAN"};
+        	var sicon = {"HOME_CLEANER":"icon1.png", "HANGING_ITEMS":"Hanging_items.jpg",  "AC_INSTALLATION":"ac.jpg", "FURNITURE_ASSEMBLY":"Furniture.jpg", "MOVING_HELP":"Moving.jpg", "DRAINS": "drains.jpg", "FAUCETS": "faucet.jpg", "TOILETS": "toilets.jpg", "GARBAGE_DISPOSAL": "garbages.jpg", "LIGHTING": "lights.jpg", "FANS": "fans.jpg", "OUTLETS": "switches.jpg", "SOMETHING_ELSE": "something-eles2.jpg"};
+        	var cicon = {"HOME_CLEANER":"icon1.png", "HANDY_MAN": "icon2.png", "PLUMBER":"icon3.png", "ELECTRICIAN": "icon4.png"};
+        	var catcol = {"HOME_CLEANER":"#8CC63F", "HANDY_MAN": "#43D1B9", "PLUMBER":"#FF5C5C", "ELECTRICIAN": "#FFB600"};
+
+
+            var toggled = false;
+            $( document ).ready(function() {
+                if(gdb("login")=="false"){
+                        window.top.location="login.html";
+                }
+            $('#hidden_menu').css({'visibility': 'hidden'});
+            $( '#hidden_menu' ).toggle( 'slide', {direction : 'right'} );
+            	loadJobs(0);
+
+            	$("#more").click(function(){
+            		loadJobs(offset_val);
+            	});
+            });
+            var d = "";
+			function loadJobs(e){
+				$.ajax({
+	                type: 'GET',
+	                data: {'request': 'FIND_JOB', 'offset':e},
+	                url: serverurl,
+	                dataType: 'text',
+	                success: function(data){
+	                    data = JSON.parse(data);
+	                    d = data;
+	                    console.log(data);
+	                    if(e == 0){
+	                    	$("#content").html("");
+	                    }
+	                    if(data.STATUS == "OK"){
+	                        //$("#error").html(data.MSG);
+
+	                        //$("#content").html('<p class="text-center">'+data.MSG+'</p>');
+	                        for(var i=0; i < data.DATA.length; i++ ){
+	                        	$("#content").append(plotJobsHTML(data.DATA[i]));
+	                    	}
+
+
+	                        
+	                    }else{
+	                        console.log(data.STATUS);
+	                        $("#content").html(data.MSG);
+
+	                    }
+
+	                    offset_val += 10;
+	                },
+	                error: function(a, b, c){
+	                    console.log("error occured. "+ b);
+	                    $("#error").html("Something went wrong. Check your internet connectivity.");
+	                }
+	            });
+			}
+
+			function plotJobsHTML(obj){
+				var html = "";
+				html +='<a style="text-decoration:none; color:black;" href="job.html#'+obj.id+'">';
+				html +='<div class="col-xs-12" style="margin-top:4px; border-radius:5px; border:1px solid silver; padding:0px; overflow:hidden;">';
+				html +='<div class="row">';
+				html +='<div class="col-xs-12" style="border-bottom:1px solid #DAD8D8">';
+                html +='<h4 style="margin-top:5px; margin-bottom:5px;">'+ plotTitle(obj) +' <span class="pull-right"><small>$</small>'+ obj.price+'</span></h4></div>';
+                html +='<div class="col-xs-12"> <p class="elipsis">'+obj.description+'</p>';
+                html +='</div>';
+                html +='</div>';
+				/*
+				html +='<div class="row">';
+				html +='<div class="col-xs-12">';
+				html +='<b>Details</b><br>';
+				html +='<small>'+ obj.details +'</small>';
+				html +='</div>';
+				html +='</div>'; */
+				html +='<div class="row text-center" style="border-top:1px solid #DAD8D8;">';
+				html +='<div class="col-xs-4" style="padding:0px;">';
+				html +='<h4 style="margin:0px;">Hours</h4>';
+				html +='</div>';
+				html +='<div class="col-xs-4" style="padding:0px; border-left:1px solid #DAD8D8; border-right:1px solid #DAD8D8;">';
+				html +='<h4 style="margin:0px;">Date</h4>';
+				html +='</div>';
+				html +='<div class="col-xs-4" style="padding:0px;">';
+				html +='<h4 style="margin:0px;">Time</h4>';
+				html +='</div>';
+				html +='</div>';
+				html +='<div class="row text-center" style="">';
+				html +='<div class="col-xs-4" style="padding:0px;">';
+				html +='<small>'+obj.hours+' HOURS</small>';
+				html +='</div>';
+				html +='<div class="col-xs-4" style="padding:0px; border-left:1px solid #DAD8D8; border-right:1px solid #DAD8D8;">';
+				html +='<small>'+obj.date+'</small>';
+				html +='</div>';
+				html +='<div class="col-xs-4" style="padding:0px;">';
+				html +='<small>'+obj.time+'</small>';
+				html +='</div>';
+				html +='</div>';
+				html +='</div>';
+				html += '</a>';
+				return html;
+			}
+
+			// background-color:'+catcol[map[obj.request]]+';
+
+			function plotDetails(obj){
+
+			}
+
+			function plotTitle(obj){
+				var title = "";
+				switch(obj.request){
+                    case "HOME_CLEANER":
+                        title = "Home Cleaner";
+                    break;
+                    case "HANGING_ITEMS":
+                        title = "Hanging Items";
+                    break;
+                    case "AC_INSTALLATION":
+                        title="AC Installation";
+                    break;
+                    case "FURNITURE_ASSEMBLY":
+                        title = "Furniture Assembly";
+                    break;
+                    case "MOVING_HELP":
+                        title = "Moving Help";
+                    break;
+                    case "DRAINS":
+                        title = "Drains";
+                    break;
+                    case "FAUCETS":
+                        title = "Faucets";
+                    break;
+                    case "TOILETS":
+                        title = "Toilets";
+                    break;
+                    case "GARBAGE_DISPOSAL":
+                        title = "Garbage Disposal";
+                    break;
+                    case "LIGHTING":
+                        title = "Lighting";
+                    break;
+                    case "FANS":
+                        title = "Ceiling/Bath Fans";
+                    break;
+                    case "SWITCHES":
+                        title = "Outlets and Switches";
+                    break;
+                    case "SOMETHING_ELSE":
+                        title = "Something else";
+                    break;
+                    default:
+                    	title = "Annonymouse";
+                    break;
+                }
+
+                return title;
+			}
+
+         </script>
+         <script>
+            function toggleMenu(){
+                $('#hidden_menu').css({'visibility': 'visible'});
+                $( '#hidden_menu' ).toggle( 'slide', {direction : 'right'} );
+                console.log( "Menu Toggled!" );
+                toggled = ! toggled;
+            }
+            $(document).swiperight(function() {
+                if(toggled){
+                    toggleMenu();
+                }
+              });
+
+              $(document).swipeleft(function() {
+                if(!toggled){
+                    toggleMenu();
+                }
+              });
+
+
+        </script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+</body>
+
+</html>
